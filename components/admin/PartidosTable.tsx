@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { Partido, Estado } from '@/types'
-import { Pencil, Trash2, GripVertical, Save, Loader2 } from 'lucide-react'
+import { Pencil, Trash2, GripVertical, Save, Loader2, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/components/ui/Toaster'
 import { useRouter } from 'next/navigation'
@@ -187,7 +187,8 @@ export default function PartidosTable({ initialPartidos }: Props) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-        </table>
+          </table>
+        </div>
       </div>
       {partidos.length === 0 && (
         <div className='px-4 py-20 text-center'>

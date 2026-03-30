@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Partido, Estado } from '@/types'
 import { Search, Save, Loader2, Calendar, Target, Image as ImageIcon } from 'lucide-react'
 import { useToast } from '@/components/ui/Toaster'
+import { AnimatePresence } from 'framer-motion'
 
 interface Props {
   partido?: Partial<Partido>
