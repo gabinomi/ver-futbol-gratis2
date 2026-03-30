@@ -19,11 +19,13 @@ create table partidos (
   escudo_local text,
   escudo_visitante text,
   fixture_id int,
+  orden int default 0,
   creado_en timestamptz default now()
 );
 
 -- Índices
 create index on partidos(estado);
+create index on partidos(orden asc);
 create index on partidos(creado_en desc);
 
 -- RLS: solo lectura pública

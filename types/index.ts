@@ -19,6 +19,7 @@ export interface Partido {
   escudo_local: string | null
   escudo_visitante: string | null
   fixture_id: number | null
+  orden: number
   creado_en: string
 }
 

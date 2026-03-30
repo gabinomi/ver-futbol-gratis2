@@ -39,38 +39,51 @@ export async function buscarEscudo(equipo: string): Promise<string | null> {
 export async function buscarFixture(
   equipoLocal: string,
   equipoVisitante: string
-): Promise<{ fixture_id: number; hora_utc: string; escudo_local: string | null; escudo_visitante: string | null } | null> {
+): Promise<{ fixture_id: number; hora_utc: string; local: string; visitante: string; escudo_local: string | null; escudo_visitante: string | null }[]> {
   try {
     const headers = { 'x-apisports-key': process.env.API_FOOTBALL_KEY! }
+    
+    // Buscamos fixtures del equipo local (los próximos 10)
     const res = await fetch(
-      `https://v3.football.api-sports.io/fixtures?team=${encodeURIComponent(equipoLocal)}&next=10`,
+      `https://v3.football.api-sports.io/fixtures?team=${encodeURIComponent(equipoLocal)}&next=15`,
       { headers }
     )
     const data = await res.json()
     const fixtures = data?.response || []
 
-    const visitanteLower = equipoVisitante.toLowerCase().substring(0, 5)
-    const fixture = fixtures.find((f: any) => {
+    // Filtramos los que coincidan con el visitante de alguna forma
+    const vLower = equipoVisitante.toLowerCase()
+    
+    // Intentamos encontrar coincidencias
+    const coincidencias = fixtures.filter((f: any) => {
       const home = f.teams.home.name.toLowerCase()
       const away = f.teams.away.name.toLowerCase()
-      return home.includes(visitanteLower) || away.includes(visitanteLower)
+      return home.includes(vLower) || away.includes(vLower) || 
+             vLower.includes(home.substring(0, 5)) || vLower.includes(away.substring(0, 5))
     })
 
-    if (!fixture) return null
+    // Si no hay coincidencias exactas, devolvemos los primeros 5 del local para que el admin elija
+    const finalFixtures = coincidencias.length > 0 ? coincidencias : fixtures.slice(0, 5)
 
-    const [escudo_local, escudo_visitante] = await Promise.all([
-      buscarEscudo(equipoLocal),
-      buscarEscudo(equipoVisitante),
-    ])
+    const resultados = await Promise.all(finalFixtures.map(async (f: any) => {
+      const [eLocal, eVisitante] = await Promise.all([
+        buscarEscudo(f.teams.home.name),
+        buscarEscudo(f.teams.away.name),
+      ])
+      
+      return {
+        fixture_id: f.fixture.id,
+        hora_utc: f.fixture.date,
+        local: f.teams.home.name,
+        visitante: f.teams.away.name,
+        escudo_local: eLocal,
+        escudo_visitante: eVisitante,
+      }
+    }))
 
-    return {
-      fixture_id: fixture.fixture.id,
-      hora_utc: fixture.fixture.date,
-      escudo_local,
-      escudo_visitante,
-    }
+    return resultados
   } catch {
-    return null
+    return []
   }
 }
 

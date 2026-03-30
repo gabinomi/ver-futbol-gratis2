@@ -7,5 +7,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Faltan equipos' }, { status: 400 })
   }
   const resultado = await buscarFixture(local, visitante)
-  return NextResponse.json(resultado || {})
+  return NextResponse.json(resultado)
 }

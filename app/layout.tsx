@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
+import { Providers } from '@/components/Providers'
+
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
@@ -22,9 +24,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel='stylesheet'
         />
       </head>
-      <body className={`${inter.variable} font-inter bg-dark-900 text-white min-h-screen overflow-x-hidden`}>
-        <div className='bg-stadium' />
-        {children}
+      <body className={`${inter.variable} font-inter bg-[#060d1a] text-white min-h-screen overflow-x-hidden`}>
+        <div className='bg-stadium fixed inset-0 z-[-1]' />
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )
